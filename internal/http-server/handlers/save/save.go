@@ -25,6 +25,7 @@ type Response struct {
 	Alias string `json:"alias"`
 }
 
+//go:generate go run github.com/vektra/mockery/v2@v2.28.2 --name=URLSaver
 type URLSaver interface {
 	SaveURL(URL, alias string) (int64, error)
 }
@@ -47,24 +48,21 @@ func New(log *slog.Logger, urlSaver URLSaver) http.HandlerFunc {
 		if errors.Is(err, io.EOF) {
 			log.Error("request body is empty")
 
-			render.JSON(w, r, resp.Error("empty request")) // <----
+			render.JSON(w, r, resp.Error("empty request"))
 
 			return
 		}
 		if err != nil {
 			log.Error("failed to decode request body", sl.Err(err))
 
-			render.JSON(w, r, resp.Error("failed to decode request")) // <----
+			render.JSON(w, r, resp.Error("failed to decode request"))
 
 			return
 		}
 
-		// Лучше больше логов, чем меньше - лишнее мы легко сможем почистить,
-		// при необходимости. А вот недостающую информацию мы уже не получим.
 		log.Info("request body decoded", slog.Any("req", req))
 
 		if err := validator.New().Struct(req); err != nil {
-			// Приводим ошибку к типу ошибки валидации
 			var validateErr validator.ValidationErrors
 			errors.As(err, &validateErr)
 
