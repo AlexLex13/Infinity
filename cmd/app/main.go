@@ -2,8 +2,11 @@ package main
 
 import (
 	"github.com/AlexLex13/Infinity/internal/config"
+	"github.com/AlexLex13/Infinity/internal/http-server/middleware/logger"
 	"github.com/AlexLex13/Infinity/internal/lib/logger/sl"
 	"github.com/AlexLex13/Infinity/internal/storage/sqlite"
+	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/chi/v5/middleware"
 	"log/slog"
 	"os"
 )
@@ -29,6 +32,13 @@ func main() {
 	}
 
 	log.Info("Storage", storage)
+
+	router := chi.NewRouter()
+
+	router.Use(middleware.RequestID) // Добавляет request_id в каждый запрос, для трейсинга
+	router.Use(middleware.Recoverer) // Если где-то внутри сервера (обработчика запроса) произойдет паника, приложение не должно упасть
+	router.Use(middleware.URLFormat) // Парсер URLов поступающих запросов
+	router.Use(logger.New(log))
 }
 
 func setupLogger(env string) *slog.Logger {
