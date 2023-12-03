@@ -2,7 +2,10 @@ package sqlite
 
 import (
 	"database/sql"
+	"errors"
 	"fmt"
+	"github.com/AlexLex13/Infinity/internal/storage"
+	"github.com/mattn/go-sqlite3"
 )
 
 type Storage struct {
@@ -35,4 +38,34 @@ func New(storagePath string) (*Storage, error) {
 	}
 
 	return &Storage{db: db}, nil
+}
+
+func (s *Storage) SaveURL(urlToSave string, alias string) (int64, error) {
+	const op = "storage.sqlite.SaveURL"
+
+	// Подготавливаем запрос
+	stmt, err := s.db.Prepare("INSERT INTO url(url,alias) values(?,?)")
+	if err != nil {
+		return 0, fmt.Errorf("%s: prepare statement: %w", op, err)
+	}
+
+	// Выполняем запрос
+	res, err := stmt.Exec(urlToSave, alias)
+	if err != nil {
+		var sqliteErr sqlite3.Error
+		if errors.As(err, &sqliteErr) && sqliteErr.ExtendedCode == sqlite3.ErrConstraintUnique {
+			return 0, fmt.Errorf("%s: %w", op, storage.ErrURLExists)
+		}
+
+		return 0, fmt.Errorf("%s: execute statement: %w", op, err)
+	}
+
+	// Получаем ID созданной записи
+	id, err := res.LastInsertId()
+	if err != nil {
+		return 0, fmt.Errorf("%s: failed to get last insert id: %w", op, err)
+	}
+
+	// Возвращаем ID
+	return id, nil
 }
