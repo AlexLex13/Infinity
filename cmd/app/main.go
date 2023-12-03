@@ -2,6 +2,8 @@ package main
 
 import (
 	"github.com/AlexLex13/Infinity/internal/config"
+	"github.com/AlexLex13/Infinity/internal/lib/logger/sl"
+	"github.com/AlexLex13/Infinity/internal/storage/sqlite"
 	"log/slog"
 	"os"
 )
@@ -20,6 +22,13 @@ func main() {
 
 	log.Info("initializing server", slog.String("address", cfg.Address)) // Помимо сообщения выведем параметр с адресом
 	log.Debug("logger debug mode enabled")
+
+	storage, err := sqlite.New(cfg.StoragePath)
+	if err != nil {
+		log.Error("failed to initialize storage", sl.Err(err))
+	}
+
+	log.Info("Storage", storage)
 }
 
 func setupLogger(env string) *slog.Logger {
