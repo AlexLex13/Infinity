@@ -1,10 +1,9 @@
-package save
+package save_test
 
 import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-
 	"github.com/AlexLex13/Infinity/internal/http-server/handlers/save"
 	"github.com/AlexLex13/Infinity/internal/http-server/handlers/save/mocks"
 	"github.com/AlexLex13/Infinity/internal/lib/logger/handlers/slogdiscard"
@@ -30,7 +29,6 @@ func TestSaveHandler(t *testing.T) {
 			// Тут поля respError и mockError оставляем пустыми,
 			// т.к. это успешный запрос
 		},
-		// Другие кейсы ...
 	}
 
 	for _, tc := range cases {
