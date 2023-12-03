@@ -7,6 +7,8 @@ import (
 	"time"
 )
 
+const AliasLength = 6
+
 type Config struct {
 	Env         string `yaml:"env" env-default:"development"`
 	StoragePath string `yaml:"storage_path" env-required:"true"`
