@@ -2,17 +2,19 @@ package save
 
 import (
 	"errors"
+	"io"
+	"log/slog"
+	"net/http"
+
 	"github.com/AlexLex13/Infinity/internal/config"
 	resp "github.com/AlexLex13/Infinity/internal/lib/api/response"
 	"github.com/AlexLex13/Infinity/internal/lib/logger/sl"
 	"github.com/AlexLex13/Infinity/internal/lib/random"
 	"github.com/AlexLex13/Infinity/internal/storage"
+
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/render"
 	"github.com/go-playground/validator"
-	"io"
-	"log/slog"
-	"net/http"
 )
 
 type Request struct {

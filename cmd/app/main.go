@@ -2,19 +2,21 @@ package main
 
 import (
 	"context"
-	"github.com/AlexLex13/Infinity/internal/config"
-	"github.com/AlexLex13/Infinity/internal/http-server/handlers/save"
-	"github.com/AlexLex13/Infinity/internal/http-server/middleware/logger"
-	"github.com/AlexLex13/Infinity/internal/lib/logger/sl"
-	"github.com/AlexLex13/Infinity/internal/storage/sqlite"
-	"github.com/go-chi/chi/v5"
-	"github.com/go-chi/chi/v5/middleware"
 	"log/slog"
 	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
 	"time"
+
+	"github.com/AlexLex13/Infinity/internal/config"
+	"github.com/AlexLex13/Infinity/internal/http-server/handlers/save"
+	"github.com/AlexLex13/Infinity/internal/http-server/middleware/logger"
+	"github.com/AlexLex13/Infinity/internal/lib/logger/sl"
+	"github.com/AlexLex13/Infinity/internal/storage/sqlite"
+
+	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/chi/v5/middleware"
 )
 
 const (

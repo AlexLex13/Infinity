@@ -2,8 +2,9 @@ package response
 
 import (
 	"fmt"
-	"github.com/go-playground/validator"
 	"strings"
+
+	"github.com/go-playground/validator"
 )
 
 type Response struct {

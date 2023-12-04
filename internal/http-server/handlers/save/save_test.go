@@ -4,14 +4,16 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"github.com/AlexLex13/Infinity/internal/http-server/handlers/save"
-	"github.com/AlexLex13/Infinity/internal/http-server/handlers/save/mocks"
-	"github.com/AlexLex13/Infinity/internal/lib/logger/handlers/slogdiscard"
-	"github.com/stretchr/testify/mock"
-	"github.com/stretchr/testify/require"
 	"net/http"
 	"net/http/httptest"
 	"testing"
+
+	"github.com/AlexLex13/Infinity/internal/http-server/handlers/save"
+	"github.com/AlexLex13/Infinity/internal/http-server/handlers/save/mocks"
+	"github.com/AlexLex13/Infinity/internal/lib/logger/handlers/slogdiscard"
+
+	"github.com/stretchr/testify/mock"
+	"github.com/stretchr/testify/require"
 )
 
 func TestSaveHandler(t *testing.T) {

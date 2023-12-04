@@ -2,14 +2,16 @@ package redirect
 
 import (
 	"errors"
+	"log/slog"
+	"net/http"
+
 	resp "github.com/AlexLex13/Infinity/internal/lib/api/response"
 	"github.com/AlexLex13/Infinity/internal/lib/logger/sl"
 	"github.com/AlexLex13/Infinity/internal/storage"
+
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/render"
-	"log/slog"
-	"net/http"
 )
 
 //go:generate go run github.com/vektra/mockery/v2@v2.28.2 --name=URLGetter
