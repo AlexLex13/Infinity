@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/AlexLex13/Infinity/internal/config"
+	"github.com/AlexLex13/Infinity/internal/http-server/handlers/redirect"
 	"github.com/AlexLex13/Infinity/internal/http-server/handlers/save"
 	"github.com/AlexLex13/Infinity/internal/http-server/middleware/logger"
 	"github.com/AlexLex13/Infinity/internal/lib/logger/sl"
@@ -47,6 +48,7 @@ func main() {
 	router.Use(logger.New(log))
 
 	router.Post("/", save.New(log, storage))
+	router.Get("/{alias}", redirect.New(log, storage))
 
 	log.Info("Server starting", slog.String("address", cfg.Address))
 
