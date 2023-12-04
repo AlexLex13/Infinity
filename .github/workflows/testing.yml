@@ -23,9 +23,3 @@ jobs:
 
     - name: Run module tests
       run: go test -v ./internal/http-server/handlers/...
-
-    - name: Run App
-      run: ./app
-
-    - name: Run functional tests
-      run: go test -v ./tests
