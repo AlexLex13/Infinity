@@ -1,0 +1,31 @@
+# This workflow will build a golang project
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-go
+
+name: Test App
+
+on:
+  workflow_dispatch
+
+jobs:
+
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Go
+      uses: actions/setup-go@v4
+      with:
+        go-version: '1.21.4'
+
+    - name: Build
+      run: go build -v ./cmd/app
+
+    - name: Run module tests
+      run: go test -v ./internal/http-server/handlers/...
+
+    - name: Run App
+      run: ./app
+
+    - name: Run functional tests
+      run: go test -v ./tests
