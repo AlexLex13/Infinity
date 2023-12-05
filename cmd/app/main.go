@@ -11,6 +11,7 @@ import (
 
 	"github.com/AlexLex13/Infinity/internal/config"
 	"github.com/AlexLex13/Infinity/internal/http-server/handlers/redirect"
+	"github.com/AlexLex13/Infinity/internal/http-server/handlers/remove"
 	"github.com/AlexLex13/Infinity/internal/http-server/handlers/save"
 	"github.com/AlexLex13/Infinity/internal/http-server/middleware/logger"
 	"github.com/AlexLex13/Infinity/internal/lib/logger/sl"
@@ -53,6 +54,7 @@ func main() {
 		}))
 
 		r.Post("/", save.New(log, storage))
+		r.Delete("/{alias}", remove.New(log, storage))
 	})
 
 	router.Get("/{alias}", redirect.New(log, storage))
