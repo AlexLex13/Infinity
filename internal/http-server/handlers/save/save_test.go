@@ -3,6 +3,7 @@ package save_test
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 	"net/http/httptest"
@@ -25,11 +26,30 @@ func TestSaveHandler(t *testing.T) {
 		mockError error  // Ошибку, которую вернёт мок
 	}{
 		{
-			name:  "Success",
+			name:  "With alias",
 			alias: "test_alias",
 			url:   "https://google.com",
-			// Тут поля respError и mockError оставляем пустыми,
-			// т.к. это успешный запрос
+		},
+		{
+			name: "Without alias",
+			url:  "https://google.com",
+		},
+		{
+			name:      "Without url",
+			respError: "field URL is a required field",
+		},
+		{
+			name:      "With invalid url",
+			alias:     "some_alias",
+			url:       "invalid url",
+			respError: "field URL is not a valid URL",
+		},
+		{
+			name:      "Save error",
+			alias:     "test_alias",
+			url:       "https://google.com",
+			respError: "failed to add url",
+			mockError: errors.New("unexpected error"),
 		},
 	}
 
