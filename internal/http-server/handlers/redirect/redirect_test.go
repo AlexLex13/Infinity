@@ -1,6 +1,7 @@
 package redirect_test
 
 import (
+	"errors"
 	"net/http/httptest"
 	"testing"
 
@@ -8,13 +9,14 @@ import (
 	"github.com/AlexLex13/Infinity/internal/http-server/handlers/redirect/mocks"
 	"github.com/AlexLex13/Infinity/internal/lib/api"
 	"github.com/AlexLex13/Infinity/internal/lib/logger/handlers/slogdiscard"
+	"github.com/AlexLex13/Infinity/internal/storage"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
-func TestSaveHandler(t *testing.T) {
+func TestRedirectHandler(t *testing.T) {
 	cases := []struct {
 		name      string
 		alias     string
@@ -23,9 +25,26 @@ func TestSaveHandler(t *testing.T) {
 		mockError error
 	}{
 		{
-			name:  "Success",
+			name:  "With exist alias",
 			alias: "test_alias",
 			url:   "https://www.google.com/",
+		},
+		{
+			name:      "Empty alias",
+			alias:     "",
+			respError: "invalid request",
+		},
+		{
+			name:      "Non existent alias",
+			alias:     "non_existent_alias",
+			respError: "not found",
+			mockError: storage.ErrURLNotFound,
+		},
+		{
+			name:      "Redirect error",
+			alias:     "test_alias",
+			respError: "failed to redirect",
+			mockError: errors.New("unexpected error"),
 		},
 	}
 
