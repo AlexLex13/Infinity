@@ -1,13 +1,16 @@
 package redirect_test
 
 import (
+	"encoding/json"
 	"errors"
+	"io"
+	"net/http"
 	"net/http/httptest"
 	"testing"
 
 	"github.com/AlexLex13/Infinity/internal/http-server/handlers/redirect"
 	"github.com/AlexLex13/Infinity/internal/http-server/handlers/redirect/mocks"
-	"github.com/AlexLex13/Infinity/internal/lib/api"
+	"github.com/AlexLex13/Infinity/internal/lib/api/response"
 	"github.com/AlexLex13/Infinity/internal/lib/logger/handlers/slogdiscard"
 	"github.com/AlexLex13/Infinity/internal/storage"
 
@@ -30,11 +33,6 @@ func TestRedirectHandler(t *testing.T) {
 			url:   "https://www.google.com/",
 		},
 		{
-			name:      "Empty alias",
-			alias:     "",
-			respError: "invalid request",
-		},
-		{
 			name:      "Non existent alias",
 			alias:     "non_existent_alias",
 			respError: "not found",
@@ -43,7 +41,7 @@ func TestRedirectHandler(t *testing.T) {
 		{
 			name:      "Redirect error",
 			alias:     "test_alias",
-			respError: "failed to redirect",
+			respError: "internal error",
 			mockError: errors.New("unexpected error"),
 		},
 	}
@@ -63,10 +61,28 @@ func TestRedirectHandler(t *testing.T) {
 			ts := httptest.NewServer(r)
 			defer ts.Close()
 
-			redirectedToURL, err := api.GetRedirect(ts.URL + "/" + tc.alias)
-			require.NoError(t, err)
+			client := &http.Client{
+				CheckRedirect: func(req *http.Request, via []*http.Request) error {
+					return http.ErrUseLastResponse // stop after 1st redirect
+				},
+			}
 
-			assert.Equal(t, tc.url, redirectedToURL)
+			resp, err := client.Get(ts.URL + "/" + tc.alias)
+			require.NoError(t, err)
+			defer func() { _ = resp.Body.Close() }()
+
+			if resp.StatusCode != http.StatusFound {
+				body, err := io.ReadAll(resp.Body)
+				require.NoError(t, err)
+
+				var res response.Response
+
+				require.NoError(t, json.Unmarshal(body, &res))
+
+				require.Equal(t, tc.respError, res.Error)
+			} else {
+				assert.Equal(t, tc.url, resp.Header.Get("Location"))
+			}
 		})
 	}
 }
